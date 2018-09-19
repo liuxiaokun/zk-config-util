@@ -32,7 +32,7 @@ public class YamlUtil {
         String profile = "dev";
         String applicationName = "config-zookeeper";
         createNode(ret.entrySet(), defaultRootNode + applicationName
-                + "/application" + (StringUtils.isEmpty(profile) ? "" : "," + profile));
+                + "/application" + (StringUtils.isEmpty(profile) ? "" : ("," + profile)));
     }
 
 
@@ -48,6 +48,7 @@ public class YamlUtil {
         for (Map.Entry temp : entrySet) {
 
             if (temp.getValue() instanceof String || temp.getValue() instanceof Integer || temp.getValue() instanceof Boolean) {
+                log.info("node:{}, value:{}", temp.getKey(), temp.getValue());
                 new ZkUtil().init().create().creatingParentContainersIfNeeded().withMode(CreateMode.PERSISTENT)
                         .forPath(prefixPath + "/" + temp.getKey(), String.valueOf(temp.getValue()).getBytes());
             } else if (temp.getValue() instanceof Map) {
