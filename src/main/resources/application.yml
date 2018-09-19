@@ -1,0 +1,19 @@
+spring:
+  #数据源配置
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:33066/test?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: root
+    #连接池配置
+
+com:
+  cloudoer:
+    name: fred
+    note: i am fred
+
+server:
+  port: 8888
+
+zookeeper:
+  connect-string: 127.0.0.1:2181
