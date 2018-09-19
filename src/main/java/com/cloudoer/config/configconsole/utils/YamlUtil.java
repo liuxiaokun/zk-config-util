@@ -18,7 +18,7 @@ public class YamlUtil {
 
 
     /**
-     * 用于导入项目
+     * 用于把yml文件中的配置数据导入zookeeper分布式配置中心
      *
      * @param args
      * @throws Exception
