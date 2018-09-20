@@ -17,11 +17,11 @@ import java.util.List;
 @Slf4j
 public class ZkUtil {
 
-    RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
-    CuratorFramework client;
+    private static ZkUtil zkUtil = new ZkUtil();
+    private static CuratorFramework client;
 
-
-    CuratorFramework init() {
+    private ZkUtil() {
+        RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
         client =
                 CuratorFrameworkFactory.builder()
                         .connectString("127.0.0.1:2181")
@@ -31,13 +31,19 @@ public class ZkUtil {
                         .build();
 
         client.start();
-        return client;
     }
 
 
+    public static ZkUtil getInstance() {
+        return zkUtil;
+    }
+
+    public CuratorFramework getClient() {
+        return client;
+    }
+
     public static void main(String[] args) throws Exception {
 
-        new ZkUtil().init();
 
 //        Stat stat = new Stat();
 //        byte[] bytes = client.getData().storingStatIn(stat).forPath("/config/config-zookeeper/user/foo");

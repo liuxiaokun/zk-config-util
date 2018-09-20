@@ -49,7 +49,7 @@ public class YamlUtil {
 
             if (temp.getValue() instanceof String || temp.getValue() instanceof Integer || temp.getValue() instanceof Boolean) {
                 log.info("node:{}, value:{}", temp.getKey(), temp.getValue());
-                new ZkUtil().init().create().creatingParentContainersIfNeeded().withMode(CreateMode.PERSISTENT)
+                ZkUtil.getInstance().getClient().create().creatingParentContainersIfNeeded().withMode(CreateMode.PERSISTENT)
                         .forPath(prefixPath + "/" + temp.getKey(), String.valueOf(temp.getValue()).getBytes());
             } else if (temp.getValue() instanceof Map) {
                 String newPath = prefixPath + (("/".equals(prefixPath)) ? "" : "/") + temp.getKey();
