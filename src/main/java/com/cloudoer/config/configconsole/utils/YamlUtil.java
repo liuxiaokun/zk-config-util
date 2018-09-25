@@ -28,7 +28,7 @@ public class YamlUtil {
         Map ret = yaml.load(YamlUtil.class.getClassLoader()
                 .getResourceAsStream("application.yml"));
 
-        String defaultRootNode = "/config/";
+        String defaultRootNode = "/cloudoer/";
         String profile = "dev";
         String applicationName = "config-zookeeper";
         createNode(ret.entrySet(), defaultRootNode + applicationName
