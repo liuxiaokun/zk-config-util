@@ -40,7 +40,7 @@ public class YamlUtil {
      * 根据yml文件创建zookeeper node
      *
      * @param entrySet   一个节点下的Map.entry集合
-     * @param prefixPath 前缀，云朵约定配置中心都在config根目录下
+     * @param prefixPath 前缀，云朵约定配置中心都在cloudoer根目录下
      * @throws Exception
      */
     private static void createNode(Set<Map.Entry> entrySet, String prefixPath) throws Exception {

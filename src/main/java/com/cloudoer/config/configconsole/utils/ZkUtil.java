@@ -5,9 +5,6 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.apache.zookeeper.data.Stat;
-
-import java.util.List;
 
 /**
  * @author liuxiaokun
@@ -24,7 +21,7 @@ public class ZkUtil {
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
         client =
                 CuratorFrameworkFactory.builder()
-                        .connectString("127.0.0.1:2181")
+                        .connectString("192.168.1.230:2181,192.168.1.230:2182,192.168.1.230:2183")
                         .sessionTimeoutMs(5000)
                         .connectionTimeoutMs(5000)
                         .retryPolicy(retryPolicy)
