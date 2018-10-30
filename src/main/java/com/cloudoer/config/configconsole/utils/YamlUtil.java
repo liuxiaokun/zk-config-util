@@ -28,7 +28,8 @@ public class YamlUtil {
         Map ret = yaml.load(YamlUtil.class.getClassLoader()
                 .getResourceAsStream("application.yml"));
 
-        String defaultRootNode = "/cloudoer/";
+        //新增父项目名，项目结构为 /cloudoer/父项目名/子模块名/application,profile/配置数据
+        String defaultRootNode = "/cloudoer/bdp/";
         String profile = "dev";
         String applicationName = "config-zookeeper";
         createNode(ret.entrySet(), defaultRootNode + applicationName
