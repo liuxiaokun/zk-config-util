@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.data.Stat;
 import org.springframework.util.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
@@ -67,7 +68,17 @@ public class YamlUtil {
 
 
     public static void main(String[] args) throws Exception {
-        dump2Json("bdp/config-zookeeper", "dev");
+        //dump2Json("bdp/config-zookeeper", "dev");
+        import2Zk("{\n" +
+                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/server/port\": \"8888\",\n" +
+                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/zookeeper/connect-string\": \"192.168.1.230:2181,192.168.1.230:2182,192.168.1.230:2183\",\n" +
+                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/url\": \"jdbc:mariadb://localhost:33066/test?useUnicode=true&characterEncoding=utf-8\",\n" +
+                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/com/cloudoer/note\": \"i am fred\",\n" +
+                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/driver-class-name\": \"org.mariadb.jdbc.Driver\",\n" +
+                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/username\": \"root\",\n" +
+                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/password\": \"root\",\n" +
+                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/com/cloudoer/name\": \"fred-update\"\n" +
+                "}");
     }
 
     private static String dump2Json(String projectName, String profile) throws Exception {
@@ -85,18 +96,46 @@ public class YamlUtil {
 
     private static void dg(String prefix, List<String> nodes, Map<String, String> result) throws Exception {
 
-        if(!prefix.endsWith("/")) {
+        if (!prefix.endsWith("/")) {
             prefix = prefix + "/";
         }
         for (String node : nodes) {
 
-            log.warn("node:{}", node);
+            log.info("node:{}", node);
             List<String> childrens = ZkUtil.getInstance().getClient().getChildren().forPath(prefix + node);
 
             if (null == childrens || childrens.size() == 0) {
                 result.put(prefix + node, new String(ZkUtil.getInstance().getClient().getData().forPath(prefix + node)));
             } else {
                 dg(prefix + node, childrens, result);
+            }
+        }
+    }
+
+    /**
+     * 把数据库中某个版本的data快照，导入zk中
+     *
+     * @param json
+     * @throws Exception
+     */
+    private static void import2Zk(String json) throws Exception {
+
+        Map<String, String> map = new Gson().fromJson(json, Map.class);
+
+        for (Map.Entry<String, String> temp : map.entrySet()) {
+            String key = temp.getKey();
+            String value = temp.getValue();
+
+            Stat stat = ZkUtil.getInstance().getClient().checkExists().forPath(key);
+
+            if (null == stat) {
+                ZkUtil.getInstance().getClient().create().creatingParentsIfNeeded().forPath(key, value.getBytes());
+            } else {
+                byte[] bytes = ZkUtil.getInstance().getClient().getData().forPath(key);
+
+                if (!new String(bytes).equals(value)) {
+                    ZkUtil.getInstance().getClient().setData().forPath(key, value.getBytes());
+                }
             }
         }
     }
