@@ -1,10 +1,14 @@
 package com.cloudoer.config.configconsole.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
 import org.springframework.util.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +27,7 @@ public class YamlUtil {
      * @param args
      * @throws Exception
      */
-    public static void main(String[] args) throws Exception {
+    public static void main1(String[] args) throws Exception {
         Yaml yaml = new Yaml();
         Map ret = yaml.load(YamlUtil.class.getClassLoader()
                 .getResourceAsStream("application.yml"));
@@ -57,6 +61,42 @@ public class YamlUtil {
                 createNode(((Map) temp.getValue()).entrySet(), newPath);
             } else {
                 throw new IllegalStateException("unknown value type.");
+            }
+        }
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        dump2Json("bdp/config-zookeeper", "dev");
+    }
+
+    private static String dump2Json(String projectName, String profile) throws Exception {
+
+        String defaultRootNode = "/cloudoer/" + projectName + "/";
+
+        List<String> strings = ZkUtil.getInstance().getClient().getChildren().forPath(defaultRootNode + "application," + profile);
+        Map<String, String> result = new HashMap<>();
+        dg(defaultRootNode + "application," + profile, strings, result);
+
+        System.out.println(new Gson().toJson(result));
+        return new Gson().toJson(result);
+    }
+
+
+    private static void dg(String prefix, List<String> nodes, Map<String, String> result) throws Exception {
+
+        if(!prefix.endsWith("/")) {
+            prefix = prefix + "/";
+        }
+        for (String node : nodes) {
+
+            log.warn("node:{}", node);
+            List<String> childrens = ZkUtil.getInstance().getClient().getChildren().forPath(prefix + node);
+
+            if (null == childrens || childrens.size() == 0) {
+                result.put(prefix + node, new String(ZkUtil.getInstance().getClient().getData().forPath(prefix + node)));
+            } else {
+                dg(prefix + node, childrens, result);
             }
         }
     }
