@@ -1,7 +1,6 @@
 package com.cloudoer.config.configconsole.utils;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
@@ -25,19 +24,16 @@ public class YamlUtil {
     /**
      * 用于把yml文件中的配置数据导入zookeeper分布式配置中心
      *
-     * @param args
      * @throws Exception
      */
-    public static void main1(String[] args) throws Exception {
+    public static void yaml2zookeeper(String filePath, String applicationName, String moduleName,String profile) throws Exception {
         Yaml yaml = new Yaml();
         Map ret = yaml.load(YamlUtil.class.getClassLoader()
-                .getResourceAsStream("application.yml"));
+                .getResourceAsStream(filePath));
 
         //新增父项目名，项目结构为 /cloudoer/父项目名/子模块名/application,profile/配置数据
-        String defaultRootNode = "/cloudoer/bdp/";
-        String profile = "dev";
-        String applicationName = "config-zookeeper";
-        createNode(ret.entrySet(), defaultRootNode + applicationName
+        String defaultRootNode = "/cloudoer/";
+        createNode(ret.entrySet(), defaultRootNode + applicationName +"/"+ moduleName
                 + "/application" + (StringUtils.isEmpty(profile) ? "" : ("," + profile)));
     }
 
@@ -69,7 +65,8 @@ public class YamlUtil {
 
     public static void main(String[] args) throws Exception {
         //dump2Json("bdp/config-zookeeper", "dev");
-        import2Zk("{\n" +
+        yaml2zookeeper("application.yml","bbb","bbb-module","dev");
+        /*import2Zk("{\n" +
                 "\t\"/cloudoer/aaa/config-zookeeper/application,dev/server/port\": \"8888\",\n" +
                 "\t\"/cloudoer/aaa/config-zookeeper/application,dev/zookeeper/connect-string\": \"192.168.1.230:2181,192.168.1.230:2182,192.168.1.230:2183\",\n" +
                 "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/url\": \"jdbc:mariadb://localhost:33066/test?useUnicode=true&characterEncoding=utf-8\",\n" +
@@ -78,7 +75,7 @@ public class YamlUtil {
                 "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/username\": \"root\",\n" +
                 "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/password\": \"root\",\n" +
                 "\t\"/cloudoer/aaa/config-zookeeper/application,dev/com/cloudoer/name\": \"fred-update\"\n" +
-                "}", "/cloudoer/aaa/config-zookeeper/application,dev");
+                "}", "/cloudoer/aaa/config-zookeeper/application,dev");*/
     }
 
     private static String dump2Json(String projectName, String profile) throws Exception {
