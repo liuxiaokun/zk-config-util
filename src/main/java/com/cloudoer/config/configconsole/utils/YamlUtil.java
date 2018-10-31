@@ -78,7 +78,7 @@ public class YamlUtil {
                 "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/username\": \"root\",\n" +
                 "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/password\": \"root\",\n" +
                 "\t\"/cloudoer/aaa/config-zookeeper/application,dev/com/cloudoer/name\": \"fred-update\"\n" +
-                "}");
+                "}", "/cloudoer/aaa/config-zookeeper/application,dev");
     }
 
     private static String dump2Json(String projectName, String profile) throws Exception {
@@ -118,7 +118,13 @@ public class YamlUtil {
      * @param json
      * @throws Exception
      */
-    private static void import2Zk(String json) throws Exception {
+    private static void import2Zk(String json, String path) throws Exception {
+
+        Stat statPath = ZkUtil.getInstance().getClient().checkExists().forPath(path);
+
+        if (null != statPath) {
+            ZkUtil.getInstance().getClient().delete().deletingChildrenIfNeeded().forPath(path);
+        }
 
         Map<String, String> map = new Gson().fromJson(json, Map.class);
 
