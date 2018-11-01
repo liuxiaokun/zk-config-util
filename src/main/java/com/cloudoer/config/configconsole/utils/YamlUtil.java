@@ -65,17 +65,8 @@ public class YamlUtil {
 
     public static void main(String[] args) throws Exception {
         //dump2Json("bdp/config-zookeeper", "dev");
-        yaml2zookeeper("application.yml","bbb","bbb-module","dev");
-        /*import2Zk("{\n" +
-                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/server/port\": \"8888\",\n" +
-                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/zookeeper/connect-string\": \"192.168.1.230:2181,192.168.1.230:2182,192.168.1.230:2183\",\n" +
-                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/url\": \"jdbc:mariadb://localhost:33066/test?useUnicode=true&characterEncoding=utf-8\",\n" +
-                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/com/cloudoer/note\": \"i am fred\",\n" +
-                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/driver-class-name\": \"org.mariadb.jdbc.Driver\",\n" +
-                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/username\": \"root\",\n" +
-                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/spring/datasource/password\": \"root\",\n" +
-                "\t\"/cloudoer/aaa/config-zookeeper/application,dev/com/cloudoer/name\": \"fred-update\"\n" +
-                "}", "/cloudoer/aaa/config-zookeeper/application,dev");*/
+        //yaml2zookeeper("application.yml","bbb","bbb-module","dev");
+        import2Zk("{\"/p1\":\"1111\"}","{\"/p1\":\"1\",\"/p2\":\"2\"}");
     }
 
     private static String dump2Json(String projectName, String profile) throws Exception {
@@ -112,20 +103,16 @@ public class YamlUtil {
     /**
      * 把数据库中某个版本的data快照，导入zk中
      *
-     * @param json
+     * @param targetJson
+     * @param sourceJson
      * @throws Exception
      */
-    private static void import2Zk(String json, String path) throws Exception {
+    private static void import2Zk(String targetJson, String sourceJson) throws Exception {
 
-        Stat statPath = ZkUtil.getInstance().getClient().checkExists().forPath(path);
+        Map<String, String> targetMap = new Gson().fromJson(targetJson, Map.class);
+        Map<String, String> sourceMap = new Gson().fromJson(sourceJson, Map.class);
 
-        if (null != statPath) {
-            ZkUtil.getInstance().getClient().delete().deletingChildrenIfNeeded().forPath(path);
-        }
-
-        Map<String, String> map = new Gson().fromJson(json, Map.class);
-
-        for (Map.Entry<String, String> temp : map.entrySet()) {
+        for (Map.Entry<String, String> temp : targetMap.entrySet()) {
             String key = temp.getKey();
             String value = temp.getValue();
 
@@ -140,6 +127,13 @@ public class YamlUtil {
                     ZkUtil.getInstance().getClient().setData().forPath(key, value.getBytes());
                 }
             }
+            sourceMap.remove(key);
+        }
+
+        for (Map.Entry<String, String> temp : sourceMap.entrySet()) {
+
+            String key = temp.getKey();
+            ZkUtil.getInstance().getClient().delete().forPath(key);
         }
     }
 }
