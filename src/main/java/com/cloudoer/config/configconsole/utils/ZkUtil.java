@@ -21,7 +21,7 @@ public class ZkUtil {
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
         client =
                 CuratorFrameworkFactory.builder()
-                        .connectString("192.168.1.110:2181,192.168.1.110:2182,192.168.1.110:2183")
+                        .connectString("192.168.1.12:2181,192.168.1.12:2182,192.168.1.12:2183")
                         .sessionTimeoutMs(5000)
                         .connectionTimeoutMs(5000)
                         .retryPolicy(retryPolicy)
