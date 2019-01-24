@@ -1,0 +1,87 @@
+server:
+  port: 7001
+spring:
+  application:
+    name: gateway-zuul
+  redis:
+    host: 172.16.69.12
+    port: 6379
+eureka:
+  client:
+    service-url:
+      defaultZone: http://172.16.69.12:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    ip-address: 172.16.69.12
+    instance-id: http://172.16.69.12:${server.port}
+
+zuul:
+  host:
+    max-total-connections: 200
+    connect-timeout-millis: 2000
+    socket-timeout-millis: 10000
+  routes:
+
+    #舆情监控（liuxk-pc）
+    pom-api:
+      path: /pom/**
+      url: http://172.16.69.16:8087/
+
+    #数据融合(zhangz-pc)
+    di-api:
+      path: /di/**
+      url: http://172.16.69.16:8093/
+
+    #数据治理(alimu)
+    dgov-api:
+      path: /dgov/**
+      url: http://172.16.69.16:8096/
+
+    #数据报送(alimu)
+    dgather-api:
+      path: /dgather/**
+      url: http://172.16.69.16:8092/
+
+    #日程(alimu)
+    calendar-api:
+      path: /calendar/**
+      url: http://172.16.69.16:8088/
+
+    #收藏(alimu)
+    favorite-api:
+      path: /favorite/**
+      url: http://172.16.69.16:8088/
+
+    #消息中心(zhangcy)
+    message-api:
+      path: /message/**
+      url: http://172.16.69.16:8088/
+
+    #书签(zhangcy)
+    bookmark-api:
+      path: /bookmark/**
+      url: http://172.16.69.16:8088/
+
+    #同一内容管理（wangqw）
+    ucmp-api:
+      path: /ucmp/**
+      url: http://172.16.69.16:8088
+
+    #新媒体矩阵(huangfh)
+    nmm-api:
+      path: /nmm/**
+      url: http://172.16.69.16:8086
+
+    #专题管理(huangfh)
+    topic-api:
+      path: /topic/**
+      url: http://172.16.69.16:7080
+
+    common-api:
+      path: /common/**
+      url: http://172.16.69.16:8089
+
+    auth-center-api:
+      path: /auth-center/**
+      serviceId: auth-center
+  sensitive-headers: cookie

@@ -1,0 +1,26 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://172.16.69.12:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    ip-address: 172.16.69.16
+    instance-id: http://172.16.69.16:${server.port}
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.cloudoer.auth.center.model.entity
+server:
+  port: 8001
+spring:
+  application:
+    name: auth-center
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    password: YTta@cloudoer12301!
+    url: jdbc:mariadb://172.16.69.26:3306/uaaa?useUnicode=true&characterEncoding=utf-8
+    username: root
+user:
+  avatar:
+    path:
+      host: http://bigtour.ytta.cn/avatar/
+      upload: /data/www/bigtour/avatar/

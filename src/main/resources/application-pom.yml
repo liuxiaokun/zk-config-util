@@ -1,0 +1,66 @@
+echart:
+  echartsConvert: /data/phantomjs/echarts-convert/echarts-convert1.js
+  genOptionJsPath: /data/phantomjs/echarts-data/genChartPng.js
+  inputDataPath: /data/phantomjs/echarts-data/
+  ouputPngPath: /data/www/
+  ouputPngURI: http://topics.ytta.cn/
+  phantomJsPath: /data/phantomjs/phantomjs-2.1.1-linux-x86_64/bin/
+
+server:
+  port: 8087
+eureka:
+  instance:
+    prefer-ip-address: true
+    ip-address: 172.16.69.16
+    instance-id: http://172.16.69.16:${server.port}
+  client:
+    service-url:
+      defaultZone: http://172.16.69.12:8761/eureka/
+
+file:
+  editor-base-path: /data/www/img/
+  editor-maxsize: 50000000
+  editor-path: kindEditor/
+  host-domain: http://topics.ytta.cn/
+  upload-path: /data/www/
+  pdf:
+    path: /data/pdf
+
+idNicknameUrl: http://passport.ytta.cn/user/id/nickname
+info:
+  app:
+    name: cloudoer-bigtour-pom
+    version: 2.0.0-SNAPSHOT
+logging:
+  level:
+    com.cloudoer.bigtour.pom.dao: debug
+
+mybatis:
+  configuration:
+    cache-enabled: true
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.cloudoer.bigtour.pom.model.entity
+
+spring:
+  application:
+    name: cloudoer-bigtour-pom
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://172.16.69.26:3306/bdp_pom?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: YTta@cloudoer12301!
+
+  kafka:
+    bootstrap-servers: app17:6667
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: test
+      enable-auto-commit: true
+      auto-commit-interval: 1000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  redis:
+    host: 172.16.69.12
+    port: 6379
